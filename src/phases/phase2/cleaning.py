@@ -44,7 +44,20 @@ def _first_present(raw: dict[str, Any], candidates: list[str]) -> Any:
 
 def normalize_row(raw: dict[str, Any], row_index: int) -> Restaurant | None:
     name = _first_present(raw, ["name", "restaurant_name", "Restaurant Name"])
-    location = _first_present(raw, ["location", "city", "Locality", "Address"])
+    
+    loc_val = _first_present(raw, ["Locality", "locality", "location"])
+    city_val = _first_present(raw, ["City", "city"])
+    
+    if loc_val and city_val and str(loc_val).lower() != str(city_val).lower() and str(city_val).lower() not in str(loc_val).lower():
+        location = f"{str(loc_val).strip()}, {str(city_val).strip()}"
+    elif loc_val:
+        location = str(loc_val).strip()
+    elif city_val:
+        location = str(city_val).strip()
+    else:
+        addr = _first_present(raw, ["Address", "address"])
+        location = str(addr).strip() if addr else None
+
     if not name or not location:
         return None
 

@@ -10,11 +10,19 @@ from src.phases.phase3.groq_client import GroqClient
 from src.phases.phase3.preferences import UserPreferences
 
 
+_BUDGET_LEVELS = {"low": 1, "medium": 2, "high": 3}
+
 def _matches_preferences(restaurant: Restaurant, prefs: UserPreferences) -> bool:
     if prefs.locality and prefs.locality.lower() != restaurant.location.lower():
-        return False
-    if prefs.budget and restaurant.cost_tier and restaurant.cost_tier != prefs.budget:
-        return False
+        if prefs.locality.lower() not in restaurant.location.lower() and restaurant.location.lower() not in prefs.locality.lower():
+            return False
+            
+    if prefs.budget and restaurant.cost_tier:
+        pref_level = _BUDGET_LEVELS.get(prefs.budget, 3)
+        rest_level = _BUDGET_LEVELS.get(restaurant.cost_tier, 3)
+        if rest_level > pref_level:
+            return False
+            
     if prefs.min_rating and (restaurant.rating is None or restaurant.rating < prefs.min_rating):
         return False
         
