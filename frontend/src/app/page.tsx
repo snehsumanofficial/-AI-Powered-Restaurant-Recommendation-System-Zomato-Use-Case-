@@ -23,6 +23,7 @@ export default function Home() {
   const [selectedLocality, setSelectedLocality] = useState("");
   const [budget, setBudget] = useState("");
   const [cuisine, setCuisine] = useState("");
+  const [cravings, setCravings] = useState("");
   const [minRating, setMinRating] = useState("3.5");
 
   useEffect(() => {
@@ -42,13 +43,24 @@ export default function Home() {
     setLoading(true);
     setRecommendations([]);
     
+    // Scale budget input
+    let scaledBudget = null;
+    if (budget) {
+      const val = parseInt(budget);
+      if (!isNaN(val)) {
+        if (val <= 800) scaledBudget = "low";
+        else if (val <= 2000) scaledBudget = "medium";
+        else scaledBudget = "high";
+      }
+    }
+    
     try {
       const response = await fetch("http://127.0.0.1:8000/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           locality: selectedLocality,
-          budget: budget || null,
+          budget: scaledBudget,
           cuisine: cuisine || null,
           min_rating: parseFloat(minRating) || 0
         })
@@ -65,123 +77,102 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.container}>
-      
-      {/* Tabs */}
-      <div className={styles.tabs}>
-        <div className={`${styles.tab} ${styles.tabActive}`}>
-          <span style={{fontSize: '1.5rem'}}>🍽️</span> Dining Out
+    <div>
+      {/* Navigation */}
+      <nav className={styles.navbar}>
+        <div className={styles.logo}>
+          <span>zomato</span> AI
         </div>
-        <div className={styles.tab}>
-          <span style={{fontSize: '1.5rem'}}>🛵</span> Delivery
+        <div className={styles.navLinks}>
+          <span className={styles.navActive}>Home</span>
+          <span>Dining Out</span>
+          <span>Delivery</span>
+          <span>Profile</span>
         </div>
-        <div className={styles.tab}>
-          <span style={{fontSize: '1.5rem'}}>🍹</span> Nightlife
-        </div>
-      </div>
+      </nav>
 
-      {/* Hero Banner */}
-      <div className={styles.banner}>
-        <div className={styles.bannerContent}>
-          <h2>Get up to</h2>
-          <h1>50% <span style={{fontSize:'2rem'}}>OFF</span></h1>
-          <p>on your dining bills with Zomato AI</p>
-          <button className={styles.bannerBtn}>Check out all the restaurants</button>
-        </div>
-      </div>
-
-      <h2>Restaurants in {selectedLocality || "your area"}</h2>
-      <br/>
-
-      {/* Filters Form */}
-      <form onSubmit={handleSearch} className={styles.searchBox}>
-        <div className={styles.formGrid}>
-          <div className={styles.inputGroup}>
-            <label>Locality</label>
-            <select 
-              className={styles.inputField}
-              value={selectedLocality}
-              onChange={(e) => setSelectedLocality(e.target.value)}
-              required
-            >
-              <option value="">Select a locality</option>
-              {localities.map(loc => <option key={loc} value={loc}>{loc}</option>)}
-            </select>
+      {/* Hero Section */}
+      <div className={styles.hero}>
+        <div className={styles.heroOverlay}></div>
+        <div className={styles.modalBox}>
+          <h2 className={styles.modalTitle}>Find Your Perfect Meal with Zomato AI</h2>
+          
+          <div className={styles.searchRow}>
+            <input type="text" className={styles.searchInput} placeholder="🎤 Hi! What are you craving today?" value={cravings} onChange={(e) => setCravings(e.target.value)} />
+            <button className={styles.sendBtn}>Send</button>
           </div>
           
-          <div className={styles.inputGroup}>
-            <label>Budget Level</label>
-            <select 
-              className={styles.inputField}
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-            >
-              <option value="">Any</option>
-              <option value="low">Low Budget (≤ ₹800)</option>
-              <option value="medium">Medium Budget (≤ ₹2000)</option>
-              <option value="high">Premium</option>
-            </select>
+          <div className={styles.chips}>
+            <span className={styles.chip} onClick={() => setCuisine("Italian")}>Italian</span>
+            <span className={styles.chip} onClick={() => setCuisine("Spicy")}>Spicy</span>
+            <span className={styles.chip} onClick={() => setCuisine("Dessert")}>Dessert</span>
+            <span className={styles.chip}>Near Me</span>
           </div>
 
-          <div className={styles.inputGroup}>
-            <label>Cuisine</label>
-            <input 
-              type="text" 
-              className={styles.inputField} 
-              placeholder="e.g. North Indian" 
-              value={cuisine}
-              onChange={(e) => setCuisine(e.target.value)}
-            />
-          </div>
+          <form onSubmit={handleSearch}>
+            <div className={styles.formGrid}>
+              <div className={styles.inputGroup}>
+                <label>LOCALITY</label>
+                <select className={styles.inputField} value={selectedLocality} onChange={(e) => setSelectedLocality(e.target.value)} required>
+                  <option value="">(e.g. Banashankari)</option>
+                  {localities.map(loc => <option key={loc} value={loc}>{loc}</option>)}
+                </select>
+              </div>
+              <div className={styles.inputGroup}>
+                <label>CUISINE</label>
+                <input type="text" className={styles.inputField} placeholder="(e.g. North Indian)" value={cuisine} onChange={e => setCuisine(e.target.value)} />
+              </div>
+              <div className={styles.inputGroup}>
+                <label>BUDGET (MAX ₹ FOR TWO)</label>
+                <input type="text" className={styles.inputField} placeholder="(e.g. 1000)" value={budget} onChange={e => setBudget(e.target.value)} />
+              </div>
+              <div className={styles.inputGroup}>
+                <label>SPECIFIC CRAVINGS</label>
+                <input type="text" className={styles.inputField} placeholder="(e.g. Biryani, Butter Chicken)" value={cravings} onChange={e => setCravings(e.target.value)} />
+              </div>
+            </div>
+            
+            <div className={styles.moreOptions}>
+              ▶ More options
+            </div>
+            
+            <button type="submit" className={styles.submitBtn} disabled={loading}>
+              {loading ? "Discovering..." : "Get Recommendations"}
+            </button>
+          </form>
+        </div>
+      </div>
 
-          <div className={styles.inputGroup}>
-            <label>Minimum Rating</label>
-            <input 
-              type="number" 
-              step="0.1" 
-              min="0" 
-              max="5" 
-              className={styles.inputField} 
-              value={minRating}
-              onChange={(e) => setMinRating(e.target.value)}
-            />
+      {/* Results Section */}
+      {recommendations.length > 0 && (
+        <div className={styles.resultsSection}>
+          <h2 className={styles.resultsTitle}>Personalized Picks for You</h2>
+          <p className={styles.resultsSubtitle}>
+            Top recommendations for {cuisine || "any cuisine"} in {selectedLocality || "your area"}, within a budget of {budget || "any"} INR for two and a minimum rating of {minRating}.<br/>
+            <small style={{color: '#aaa', marginTop: '5px', display: 'block'}}>Shortlist {recommendations.length} • LLM ranked</small>
+          </p>
+
+          <div className={styles.grid}>
+            {recommendations.map((rec) => (
+              <div key={rec.restaurant_id} className={styles.card}>
+                <div className={styles.cardContent}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardTitle}>{rec.name}</div>
+                    <div className={styles.cardRating}>★ {rec.rating || "-"}</div>
+                  </div>
+                  <div className={styles.cardSub}>
+                    {rec.cuisines?.slice(0,3).join(" • ")} • ₹{rec.cost_for_two || "-"} for two
+                  </div>
+                  <div className={styles.aiReason}>
+                    <div className={styles.aiReasonTitle}>AI REASON</div>
+                    <div>{rec.explanation}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-        <button type="submit" className={styles.submitBtn} disabled={loading}>
-          {loading ? "Discovering..." : "Get AI Recommendations"}
-        </button>
-      </form>
-
-      {/* Results */}
-      <div className={styles.grid}>
-        {recommendations.map((rec) => (
-          <div key={rec.restaurant_id} className={styles.card}>
-            <div 
-              className={styles.cardImage} 
-              style={{backgroundImage: `url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')`, backgroundSize: 'cover', backgroundPosition: 'center'}}
-            />
-            <div className={styles.cardContent}>
-              <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>{rec.name}</div>
-                <div className={styles.cardRating}>{rec.rating || "-"} ★</div>
-              </div>
-              <div className={styles.cardSub}>
-                <span>{rec.cuisines?.slice(0,2).join(", ")}</span>
-                <span>₹{rec.cost_for_two || "-"} for two</span>
-              </div>
-              <div className={styles.cardSub} style={{fontSize: '0.8rem'}}>
-                <span>{rec.locality}</span>
-              </div>
-              {rec.explanation && (
-                <div className={styles.cardExplanation}>
-                  ✨ {rec.explanation}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-      
+      )}
     </div>
   );
 }
