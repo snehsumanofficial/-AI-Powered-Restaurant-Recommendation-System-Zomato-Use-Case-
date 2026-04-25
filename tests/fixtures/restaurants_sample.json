@@ -1,0 +1,31 @@
+[
+  {
+    "Restaurant Name": "Spice Garden",
+    "Locality": "Delhi",
+    "Cuisines": "North Indian, Chinese",
+    "Average Cost for two": 600,
+    "Aggregate rating": "4.2",
+    "Votes": 120
+  },
+  {
+    "Restaurant Name": "Ocean Bowl",
+    "Locality": "Delhi",
+    "Cuisines": "Seafood, Continental, Seafood",
+    "Average Cost for two": 1800,
+    "Aggregate rating": "4.8"
+  },
+  {
+    "Restaurant Name": "Budget Bites",
+    "Locality": "Noida",
+    "Cuisines": null,
+    "Average Cost for two": "2500",
+    "Aggregate rating": "9.4"
+  },
+  {
+    "Restaurant Name": "",
+    "Locality": "Noida",
+    "Cuisines": "Street Food",
+    "Average Cost for two": 250,
+    "Aggregate rating": "3.9"
+  }
+]

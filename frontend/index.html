@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Recommender</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 0 12px; }
+      form { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+      .full { grid-column: 1 / -1; }
+      input, select, button, textarea { padding: 8px; font-size: 14px; }
+      .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-top: 10px; }
+      .muted { color: #666; }
+    </style>
+  </head>
+  <body>
+    <h1>Restaurant Recommender</h1>
+    <p class="muted">Backend: <code>http://127.0.0.1:8000</code></p>
+
+    <form id="recommend-form">
+      <div>
+        <label>Locality</label>
+        <select id="locality" required>
+          <option value="">Loading localities...</option>
+        </select>
+      </div>
+      <div>
+        <label>Budget</label>
+        <select id="budget">
+          <option value="">Any</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div>
+        <label>Cuisine(s)</label>
+        <input id="cuisine" placeholder="e.g. chinese, north indian" />
+      </div>
+      <div>
+        <label>Min Rating</label>
+        <input id="min_rating" type="number" min="0" max="5" step="0.1" value="3.5" />
+      </div>
+      <div class="full">
+        <label>Extras</label>
+        <textarea id="extras" rows="2" placeholder="e.g. family-friendly"></textarea>
+      </div>
+      <div class="full">
+        <button type="submit">Get Recommendations</button>
+      </div>
+    </form>
+
+    <h2>Results</h2>
+    <div id="status" class="muted"></div>
+    <div id="results"></div>
+
+    <script>
+      const form = document.getElementById("recommend-form");
+      const statusEl = document.getElementById("status");
+      const resultsEl = document.getElementById("results");
+      const localityEl = document.getElementById("locality");
+
+      async function loadLocalities() {
+        try {
+          const response = await fetch("http://127.0.0.1:8000/localities");
+          const data = await response.json();
+          localityEl.innerHTML = "";
+          for (const locality of data.localities || []) {
+            const option = document.createElement("option");
+            option.value = locality;
+            option.textContent = locality;
+            localityEl.appendChild(option);
+          }
+          if (!localityEl.value && localityEl.options.length > 0) {
+            localityEl.value = localityEl.options[0].value;
+          }
+          if (localityEl.options.length === 0) {
+            localityEl.innerHTML = "<option value=''>No localities available</option>";
+          }
+        } catch (err) {
+          localityEl.innerHTML = "<option value=''>Failed to load localities</option>";
+          statusEl.textContent = `Error loading localities: ${err.message}`;
+        }
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        statusEl.textContent = "Loading...";
+        resultsEl.innerHTML = "";
+
+        const payload = {
+          locality: localityEl.value,
+          budget: document.getElementById("budget").value || null,
+          cuisine: document.getElementById("cuisine").value || null,
+          min_rating: Number(document.getElementById("min_rating").value || 0),
+          extras: document.getElementById("extras").value || null
+        };
+
+        try {
+          const response = await fetch("http://127.0.0.1:8000/recommend", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.detail || "Request failed");
+          }
+          statusEl.textContent = `${data.summary} (${data.count} result(s))`;
+          for (const rec of data.recommendations) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+              <strong>#${rec.rank} ${rec.name}</strong><br />
+              <span class="muted">${rec.locality} | ${rec.cuisines.join(", ") || "N/A"}</span><br />
+              Rating: ${rec.rating ?? "N/A"} | Cost for two: ${rec.cost_for_two ?? "N/A"} (${rec.cost_tier ?? "N/A"})<br />
+              <em>${rec.explanation || ""}</em>
+            `;
+            resultsEl.appendChild(card);
+          }
+          if (data.recommendations.length === 0) {
+            resultsEl.innerHTML = "<div class='muted'>No recommendations found.</div>";
+          }
+        } catch (err) {
+          statusEl.textContent = `Error: ${err.message}`;
+        }
+      });
+
+      loadLocalities();
+    </script>
+  </body>
+  </html>
