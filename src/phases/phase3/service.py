@@ -11,14 +11,24 @@ from src.phases.phase3.preferences import UserPreferences
 
 
 def _matches_preferences(restaurant: Restaurant, prefs: UserPreferences) -> bool:
-    if prefs.locality != restaurant.location:
+    if prefs.locality and prefs.locality.lower() != restaurant.location.lower():
         return False
     if prefs.budget and restaurant.cost_tier and restaurant.cost_tier != prefs.budget:
         return False
     if prefs.min_rating and (restaurant.rating is None or restaurant.rating < prefs.min_rating):
         return False
-    if prefs.cuisines and not any(c in restaurant.cuisines for c in prefs.cuisines):
-        return False
+        
+    if prefs.cuisines:
+        restaurant_cuisines_lower = [c.lower() for c in restaurant.cuisines]
+        matched = False
+        for pref_c in prefs.cuisines:
+            pref_c_lower = pref_c.lower()
+            if any(pref_c_lower in rc for rc in restaurant_cuisines_lower):
+                matched = True
+                break
+        if not matched:
+            return False
+            
     return True
 
 
