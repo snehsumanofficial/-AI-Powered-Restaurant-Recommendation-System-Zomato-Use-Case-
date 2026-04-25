@@ -27,10 +27,13 @@ def parse_cuisines(cuisine_value: Any) -> list[str]:
 
 
 def _safe_float(value: Any) -> float | None:
-    if value in (None, "", "null", "NULL"):
+    if value in (None, "", "null", "NULL", "NEW", "-", "NaN", "nan"):
         return None
     try:
-        return float(value)
+        s = str(value).strip().replace(",", "")
+        if "/" in s:
+            s = s.split("/")[0].strip()
+        return float(s)
     except (TypeError, ValueError):
         return None
 
@@ -46,7 +49,7 @@ def normalize_row(raw: dict[str, Any], row_index: int) -> Restaurant | None:
     name = _first_present(raw, ["name", "restaurant_name", "Restaurant Name"])
     
     loc_val = _first_present(raw, ["Locality", "locality", "location"])
-    city_val = _first_present(raw, ["City", "city"])
+    city_val = _first_present(raw, ["City", "city", "listed_in(city)"])
     
     if loc_val and city_val and str(loc_val).lower() != str(city_val).lower() and str(city_val).lower() not in str(loc_val).lower():
         location = f"{str(loc_val).strip()}, {str(city_val).strip()}"
@@ -61,9 +64,9 @@ def normalize_row(raw: dict[str, Any], row_index: int) -> Restaurant | None:
     if not name or not location:
         return None
 
-    cuisine_value = _first_present(raw, ["cuisines", "Cuisine", "Cuisines"])
-    cost_value = _first_present(raw, ["cost_for_two", "average_cost_for_two", "Average Cost for two"])
-    rating_value = _first_present(raw, ["rating", "aggregate_rating", "Aggregate rating"])
+    cuisine_value = _first_present(raw, ["cuisines", "Cuisine", "Cuisines", "dish_liked"])
+    cost_value = _first_present(raw, ["cost_for_two", "average_cost_for_two", "Average Cost for two", "approx_cost(for two people)"])
+    rating_value = _first_present(raw, ["rating", "aggregate_rating", "Aggregate rating", "rate"])
 
     cuisines = parse_cuisines(cuisine_value)
     cost_for_two = _safe_float(cost_value)
