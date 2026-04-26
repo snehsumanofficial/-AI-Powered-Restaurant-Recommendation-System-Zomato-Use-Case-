@@ -454,4 +454,4 @@ body { font-family:'Poppins',sans-serif;
 </body></html>
 """
 
-# components.html(HERO_HTML, height=1050, scrolling=False)  # Commented out duplicate
+components.html(HERO_HTML, height=1050, scrolling=False)
