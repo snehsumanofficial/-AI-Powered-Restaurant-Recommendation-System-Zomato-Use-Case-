@@ -146,45 +146,55 @@ function playDing() {
 </video>
 
 <!-- 10 Floating Kawaii Food Characters -->
-<div class="floating-food" style="top: 15%; animation-duration: 25s; animation-delay: 0s;">
+<div class="floating-food" style="top: 10%; animation-duration: 25s; animation-delay: 0s;" 
+     onmouseenter="playPop()" onclick="alert('🥑 Fun Fact: Avocados are actually large berries with a single seed!')">
     <div class="speech">Hi! 😊</div>
     <div class="emoji">🍔<div class="face">◕‿◕</div></div>
 </div>
-<div class="floating-food" style="top: 40%; animation-duration: 35s; animation-delay: -5s;">
+<div class="floating-food" style="top: 35%; animation-duration: 35s; animation-delay: -5s;" 
+     onmouseenter="playPop()" onclick="alert('🍕 Fun Fact: Over 5 billion pizzas are sold worldwide each year!')">
     <div class="speech">Yum! 🥰</div>
     <div class="emoji">🍕<div class="face">^ω^</div></div>
 </div>
-<div class="floating-food" style="top: 65%; animation-duration: 28s; animation-delay: -10s;">
-    <div class="speech">Hey! ✨</div>
+<div class="floating-food" style="top: 60%; animation-duration: 28s; animation-delay: -10s;" 
+     onmouseenter="playPop()" onclick="alert('🍩 Fun Fact: The Dutch are credited with inventing the doughnut!')">
+    <div class="speech">Catch me!</div>
     <div class="emoji">🍩<div class="face">°o°</div></div>
 </div>
-<div class="floating-food" style="top: 85%; animation-duration: 40s; animation-delay: -15s;">
+<div class="floating-food" style="top: 85%; animation-duration: 40s; animation-delay: -15s;" 
+     onmouseenter="playPop()" onclick="alert('🌮 Fun Fact: Tacos predate the arrival of the Spanish in Mexico!')">
     <div class="speech">Hola! 🌮</div>
     <div class="emoji">🌮<div class="face">♥‿♥</div></div>
 </div>
-<div class="floating-food" style="top: 10%; animation-duration: 32s; animation-delay: -20s;">
+<div class="floating-food" style="top: 20%; animation-duration: 32s; animation-delay: -20s;" 
+     onmouseenter="playPop()" onclick="alert('🥟 Fun Fact: Dumplings have been a staple in China for over 1,800 years!')">
     <div class="speech">Hello!</div>
-    <div class="emoji">🍣<div class="face">☆ω☆</div></div>
+    <div class="emoji">🥟<div class="face">☆ω☆</div></div>
 </div>
-<div class="floating-food" style="top: 30%; animation-duration: 38s; animation-delay: -25s;">
+<div class="floating-food" style="top: 45%; animation-duration: 38s; animation-delay: -25s;" 
+     onmouseenter="playPop()" onclick="alert('🍰 Fun Fact: The world\'s tallest cake was over 100 feet tall!')">
     <div class="speech">Sweet!</div>
     <div class="emoji">🍰<div class="face">˘▾˘</div></div>
 </div>
-<div class="floating-food" style="top: 55%; animation-duration: 22s; animation-delay: -8s;">
+<div class="floating-food" style="top: 70%; animation-duration: 22s; animation-delay: -8s;" 
+     onmouseenter="playPop()" onclick="alert('🧁 Fun Fact: Cupcakes were originally called \'number cakes\'!')">
     <div class="speech">Heyyy 😄</div>
     <div class="emoji">🧁<div class="face">⊙ω⊙</div></div>
 </div>
-<div class="floating-food" style="top: 75%; animation-duration: 30s; animation-delay: -18s;">
+<div class="floating-food" style="top: 15%; animation-duration: 30s; animation-delay: -18s;" 
+     onmouseenter="playPop()" onclick="alert('🍜 Fun Fact: Ramen originated in China before becoming a Japanese icon!')">
     <div class="speech">Namaste!</div>
     <div class="emoji">🍜<div class="face">ᵔᴥᵔ</div></div>
 </div>
-<div class="floating-food" style="top: 20%; animation-duration: 45s; animation-delay: -2s;">
+<div class="floating-food" style="top: 55%; animation-duration: 45s; animation-delay: -2s;" 
+     onmouseenter="playPop()" onclick="alert('🍦 Fun Fact: It takes about 50 licks to finish a single scoop of ice cream!')">
     <div class="speech">Cool! 🍦</div>
     <div class="emoji">🍦<div class="face">≧◡≦</div></div>
 </div>
-<div class="floating-food" style="top: 80%; animation-duration: 26s; animation-delay: -12s;">
-    <div class="speech">Bonjour!</div>
-    <div class="emoji">🥐<div class="face">•̀ᴗ•́</div></div>
+<div class="floating-food" style="top: 80%; animation-duration: 26s; animation-delay: -12s;" 
+     onmouseenter="playPop()" onclick="alert('🥐 Fun Fact: Croissants actually originated in Austria, not France!')">
+    <div class="speech">Too slow!</div>
+    <div class="emoji"> croissant<div class="face">•̀ᴗ•́</div></div>
 </div>
 """, unsafe_allow_html=True)
 
