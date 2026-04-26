@@ -28,9 +28,21 @@ st.markdown("""
 #MainMenu, header, footer {visibility: hidden;}
 .block-container {padding-top: 0 !important; max-width: 100% !important;}
 .stApp {
-    background: linear-gradient(160deg, #ffd6e0 0%, #ffafc5 20%, #ffc2d1 40%, #ff8fab 60%, #ffb3c6 80%, #ffc2d1 100%) !important;
+    background: linear-gradient(160deg, rgba(255,214,224,0.7) 0%, rgba(255,175,197,0.7) 100%) !important;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden !important;
+}
+
+/* Background Video Styling */
+#bg-video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+    object-fit: cover;
+    opacity: 0.45;
 }
 .stSelectbox > div > div { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; font-size: 1.1rem !important; }
 .stTextInput > div > div > input { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; font-size: 1.1rem !important; }
@@ -104,6 +116,11 @@ div[data-testid="stWidgetLabel"] p {
     font-family: 'Poppins', sans-serif;
 }
 </style>
+
+<!-- Full Page Background Video -->
+<video autoplay muted loop playsinline id="bg-video">
+    <source src="https://b.zmtcdn.com/data/file_assets/5e05c26b91b99ae33bfc1c6d45626cbe1722240498.mp4" type="video/mp4">
+</video>
 
 <!-- 10 Floating Kawaii Food Characters -->
 <div class="floating-food" style="top: 15%; animation-duration: 25s; animation-delay: 0s;">
