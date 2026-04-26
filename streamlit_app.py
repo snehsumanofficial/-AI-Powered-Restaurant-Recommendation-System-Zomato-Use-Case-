@@ -63,11 +63,34 @@ div[data-testid="stWidgetLabel"] p {
     box-shadow: 0 4px 15px rgba(239,79,95,0.3) !important;
     margin-top: 10px !important;
 }
-.stButton > button:hover {
-    background: linear-gradient(135deg, #d64550, #c42f3e) !important;
-    box-shadow: 0 8px 25px rgba(239,79,95,0.4) !important;
-    transform: translateY(-1px);
+/* Card Bounce Animation */
+@keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.3) translateY(100px); }
+    50% { opacity: 0.9; transform: scale(1.05) translateY(-10px); }
+    70% { transform: scale(0.9) translateY(5px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
 }
+
+.result-card {
+    animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* Sound Effect Logic */
+.sound-trigger:hover { cursor: pointer; }
+</style>
+
+<script>
+function playPop() {
+    var audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+    audio.volume = 0.2;
+    audio.play();
+}
+function playDing() {
+    var audio = new Audio('https://assets.mixkit.co/active_storage/sfx/600/600-preview.mp3');
+    audio.volume = 0.3;
+    audio.play();
+}
+</script>
 
 /* Floating Food Animations */
 @keyframes floatAcross {
@@ -202,7 +225,11 @@ with col3:
 with col4:
     min_rating = st.slider("⭐ Min Rating", 0.0, 5.0, 3.5, 0.1)
 
-search_clicked = st.button("🔍  Get AI Recommendations")
+# --- Zingi Chef Chat ---
+st.markdown('<p style="font-size:1.4rem; font-weight:700; margin-bottom:0px; color:#1c1c1c;">🧑‍🍳 Talk to Zingi Chef (Optional)</p>', unsafe_allow_html=True)
+user_request = st.text_input("", placeholder="e.g. I want something spicy and family friendly under 500", key="zingi_chat")
+
+search_clicked = st.button("🔍  Get AI Recommendations", on_click=None)
 
 if not search_clicked:
     st.markdown("""
@@ -255,6 +282,7 @@ if search_clicked:
         budget=budget if budget else None,
         cuisines=[c.strip() for c in cuisine.split(",") if c.strip()],
         min_rating=min_rating,
+        extras=user_request
     )
 
     with st.spinner("🔎 Finding the best restaurants for you…"):
@@ -305,9 +333,10 @@ if search_clicked:
             cards = ""
             for i, item in enumerate(display_items):
                 img = FOOD_IMAGES[i % len(FOOD_IMAGES)]
+                delay = i * 0.1
                 cards += f"""
-                <div style="background:#fff;border:1px solid #eee;border-radius:16px;overflow:hidden;
-                            box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:transform 0.2s;">
+                <div class="result-card" style="background:#fff;border:1px solid #eee;border-radius:16px;overflow:hidden;
+                            box-shadow:0 2px 12px rgba(0,0,0,0.06); transition:transform 0.2s; animation-delay: {delay}s;">
                     <img src="{img}" style="width:100%;height:180px;object-fit:cover;">
                     <div style="padding:18px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
