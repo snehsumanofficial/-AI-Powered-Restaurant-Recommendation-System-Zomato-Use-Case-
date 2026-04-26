@@ -82,7 +82,7 @@ def build_llm_context(candidates: list[Restaurant], prefs: UserPreferences) -> s
 def _fallback_recommendation(candidates: list[Restaurant]) -> dict[str, Any]:
     top = candidates[:5]
     return {
-        "summary": "Top restaurants based on structured filters.",
+        "summary": f"Found {len(candidates)} restaurants matching your filters. Here are the top picks sorted by rating.",
         "recommendations": [
             {
                 "restaurant_id": r.id,
@@ -109,14 +109,19 @@ def recommend_with_groq(
 
     context = build_llm_context(candidates, prefs)
     prompt = (
-        "Return strict JSON with keys summary and recommendations. "
-        "recommendations must be an array with restaurant_id, rank, explanation. "
-        "Use only provided candidate IDs and facts.\n\n"
-        f"{context}"
+        f"USER PREFERENCES:\n- Cuisines: {', '.join(prefs.cuisines) if prefs.cuisines else 'Any'}\n"
+        f"- Min Rating: {prefs.min_rating}\n- Locality: {prefs.locality}\n\n"
+        "CANDIDATE RESTAURANTS:\n"
+        f"{context}\n\n"
+        "TASK: Rank the top 5 restaurants that BEST match the user's cuisine and rating preferences. "
+        "Return strict JSON with keys 'summary' and 'recommendations'. "
+        "In 'summary', explain exactly how these choices fit the requested cuisine and rating. "
+        "In 'recommendations', provide an array of objects with 'restaurant_id', 'rank', and 'explanation'. "
+        "The 'explanation' must mention why the cuisine and rating are a good match."
     )
     try:
         client = GroqClient(settings=settings, timeout_seconds=45)
-        response = client.chat(prompt, system_prompt="You are a precise restaurant ranking assistant.")
+        response = client.chat(prompt, system_prompt="You are a precise Zomato restaurant recommender. Always prioritize the user's specific cuisine and rating filters.")
         parsed = json.loads(response.text)
         if isinstance(parsed, dict) and "recommendations" in parsed:
             return parsed
