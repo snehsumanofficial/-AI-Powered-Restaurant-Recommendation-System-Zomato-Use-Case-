@@ -17,14 +17,8 @@ st.set_page_config(
     page_title="Zomato AI — Restaurant Recommendations",
     page_icon="🍽️",
     layout="wide",
-    initial_sidebar_state="collapseat-l">restaurants</div></div><div class="stat-i">🏪</div></div>
-        <div class="stat"><div><div class="stat-n">800+</div><div class="stat-l">cities</div></div><div class="stat-i">📍</div></div>
-        <div class="stat"><div><div class="stat-n">3 billion+</div><div class="stat-l">orders delivered</div></div><div class="stat-i">📦</div></div>
-    </div>
-</div>
-</body></html>
-"""
-components.html(HERO_HTML, height=1050, scrolling=False)
+    initial_sidebar_state="collapsed",
+)
 
 
 # Hide default chrome + custom widget styles + Floating Food Items
