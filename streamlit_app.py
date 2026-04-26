@@ -22,7 +22,7 @@ st.set_page_config(
 
 
 # Hide default chrome + custom widget styles + Floating Food Items
-st.markdown("""
+ST_STYLE = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 #MainMenu, header, footer {visibility: hidden;}
@@ -63,34 +63,11 @@ div[data-testid="stWidgetLabel"] p {
     box-shadow: 0 4px 15px rgba(239,79,95,0.3) !important;
     margin-top: 10px !important;
 }
-/* Card Bounce Animation */
-@keyframes bounceIn {
-    0% { opacity: 0; transform: scale(0.3) translateY(100px); }
-    50% { opacity: 0.9; transform: scale(1.05) translateY(-10px); }
-    70% { transform: scale(0.9) translateY(5px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
+.stButton > button:hover {
+    background: linear-gradient(135deg, #d64550, #c42f3e) !important;
+    box-shadow: 0 8px 25px rgba(239,79,95,0.4) !important;
+    transform: translateY(-1px);
 }
-
-.result-card {
-    animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-}
-
-/* Sound Effect Logic */
-.sound-trigger:hover { cursor: pointer; }
-</style>
-
-<script>
-function playPop() {
-    var audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
-    audio.volume = 0.2;
-    audio.play();
-}
-function playDing() {
-    var audio = new Audio('https://assets.mixkit.co/active_storage/sfx/600/600-preview.mp3');
-    audio.volume = 0.3;
-    audio.play();
-}
-</script>
 
 /* Floating Food Animations */
 @keyframes floatAcross {
@@ -102,7 +79,7 @@ function playDing() {
 .floating-food {
     position: fixed;
     z-index: 0;
-    pointer-events: none; /* Allows clicking through them */
+    pointer-events: none;
     animation: floatAcross linear infinite;
     display: flex;
     flex-direction: column;
@@ -146,57 +123,48 @@ function playDing() {
 </video>
 
 <!-- 10 Floating Kawaii Food Characters -->
-<div class="floating-food" style="top: 10%; animation-duration: 25s; animation-delay: 0s;" 
-     onmouseenter="playPop()" onclick="alert('🥑 Fun Fact: Avocados are actually large berries with a single seed!')">
+<div class="floating-food" style="top: 15%; animation-duration: 25s; animation-delay: 0s;">
     <div class="speech">Hi! 😊</div>
     <div class="emoji">🍔<div class="face">◕‿◕</div></div>
 </div>
-<div class="floating-food" style="top: 35%; animation-duration: 35s; animation-delay: -5s;" 
-     onmouseenter="playPop()" onclick="alert('🍕 Fun Fact: Over 5 billion pizzas are sold worldwide each year!')">
+<div class="floating-food" style="top: 40%; animation-duration: 35s; animation-delay: -5s;">
     <div class="speech">Yum! 🥰</div>
     <div class="emoji">🍕<div class="face">^ω^</div></div>
 </div>
-<div class="floating-food" style="top: 60%; animation-duration: 28s; animation-delay: -10s;" 
-     onmouseenter="playPop()" onclick="alert('🍩 Fun Fact: The Dutch are credited with inventing the doughnut!')">
-    <div class="speech">Catch me!</div>
+<div class="floating-food" style="top: 65%; animation-duration: 28s; animation-delay: -10s;">
+    <div class="speech">Hey! ✨</div>
     <div class="emoji">🍩<div class="face">°o°</div></div>
 </div>
-<div class="floating-food" style="top: 85%; animation-duration: 40s; animation-delay: -15s;" 
-     onmouseenter="playPop()" onclick="alert('🌮 Fun Fact: Tacos predate the arrival of the Spanish in Mexico!')">
+<div class="floating-food" style="top: 85%; animation-duration: 40s; animation-delay: -15s;">
     <div class="speech">Hola! 🌮</div>
     <div class="emoji">🌮<div class="face">♥‿♥</div></div>
 </div>
-<div class="floating-food" style="top: 20%; animation-duration: 32s; animation-delay: -20s;" 
-     onmouseenter="playPop()" onclick="alert('🥟 Fun Fact: Dumplings have been a staple in China for over 1,800 years!')">
+<div class="floating-food" style="top: 10%; animation-duration: 32s; animation-delay: -20s;">
     <div class="speech">Hello!</div>
-    <div class="emoji">🥟<div class="face">☆ω☆</div></div>
+    <div class="emoji">🍣<div class="face">☆ω☆</div></div>
 </div>
-<div class="floating-food" style="top: 45%; animation-duration: 38s; animation-delay: -25s;" 
-     onmouseenter="playPop()" onclick="alert('🍰 Fun Fact: The world\'s tallest cake was over 100 feet tall!')">
+<div class="floating-food" style="top: 30%; animation-duration: 38s; animation-delay: -25s;">
     <div class="speech">Sweet!</div>
     <div class="emoji">🍰<div class="face">˘▾˘</div></div>
 </div>
-<div class="floating-food" style="top: 70%; animation-duration: 22s; animation-delay: -8s;" 
-     onmouseenter="playPop()" onclick="alert('🧁 Fun Fact: Cupcakes were originally called \'number cakes\'!')">
+<div class="floating-food" style="top: 55%; animation-duration: 22s; animation-delay: -8s;">
     <div class="speech">Heyyy 😄</div>
     <div class="emoji">🧁<div class="face">⊙ω⊙</div></div>
 </div>
-<div class="floating-food" style="top: 15%; animation-duration: 30s; animation-delay: -18s;" 
-     onmouseenter="playPop()" onclick="alert('🍜 Fun Fact: Ramen originated in China before becoming a Japanese icon!')">
+<div class="floating-food" style="top: 75%; animation-duration: 30s; animation-delay: -18s;">
     <div class="speech">Namaste!</div>
     <div class="emoji">🍜<div class="face">ᵔᴥᵔ</div></div>
 </div>
-<div class="floating-food" style="top: 55%; animation-duration: 45s; animation-delay: -2s;" 
-     onmouseenter="playPop()" onclick="alert('🍦 Fun Fact: It takes about 50 licks to finish a single scoop of ice cream!')">
+<div class="floating-food" style="top: 20%; animation-duration: 45s; animation-delay: -2s;">
     <div class="speech">Cool! 🍦</div>
     <div class="emoji">🍦<div class="face">≧◡≦</div></div>
 </div>
-<div class="floating-food" style="top: 80%; animation-duration: 26s; animation-delay: -12s;" 
-     onmouseenter="playPop()" onclick="alert('🥐 Fun Fact: Croissants actually originated in Austria, not France!')">
-    <div class="speech">Too slow!</div>
-    <div class="emoji"> croissant<div class="face">•̀ᴗ•́</div></div>
+<div class="floating-food" style="top: 80%; animation-duration: 26s; animation-delay: -12s;">
+    <div class="speech">Bonjour!</div>
+    <div class="emoji">🥐<div class="face">•̀ᴗ•́</div></div>
 </div>
-""", unsafe_allow_html=True)
+"""
+st.markdown(ST_STYLE, unsafe_allow_html=True)
 
 # ── DATA INIT ────────────────────────────────────────────────────────
 @st.cache_resource
@@ -235,11 +203,7 @@ with col3:
 with col4:
     min_rating = st.slider("⭐ Min Rating", 0.0, 5.0, 3.5, 0.1)
 
-# --- Zingi Chef Chat ---
-st.markdown('<p style="font-size:1.4rem; font-weight:700; margin-bottom:0px; color:#1c1c1c;">🧑‍🍳 Talk to Zingi Chef (Optional)</p>', unsafe_allow_html=True)
-user_request = st.text_input("", placeholder="e.g. I want something spicy and family friendly under 500", key="zingi_chat")
-
-search_clicked = st.button("🔍  Get AI Recommendations", on_click=None)
+search_clicked = st.button("🔍  Get AI Recommendations")
 
 if not search_clicked:
     st.markdown("""
@@ -292,7 +256,6 @@ if search_clicked:
         budget=budget if budget else None,
         cuisines=[c.strip() for c in cuisine.split(",") if c.strip()],
         min_rating=min_rating,
-        extras=user_request
     )
 
     with st.spinner("🔎 Finding the best restaurants for you…"):
@@ -343,10 +306,9 @@ if search_clicked:
             cards = ""
             for i, item in enumerate(display_items):
                 img = FOOD_IMAGES[i % len(FOOD_IMAGES)]
-                delay = i * 0.1
                 cards += f"""
-                <div class="result-card" style="background:#fff;border:1px solid #eee;border-radius:16px;overflow:hidden;
-                            box-shadow:0 2px 12px rgba(0,0,0,0.06); transition:transform 0.2s; animation-delay: {delay}s;">
+                <div style="background:#fff;border:1px solid #eee;border-radius:16px;overflow:hidden;
+                            box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:transform 0.2s;">
                     <img src="{img}" style="width:100%;height:180px;object-fit:cover;">
                     <div style="padding:18px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
