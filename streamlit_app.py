@@ -20,24 +20,30 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+
 # Hide default chrome + custom widget styles
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 #MainMenu, header, footer {visibility: hidden;}
 .block-container {padding-top: 0 !important; max-width: 100% !important;}
-.stApp {background: #ffffff; font-family: 'Poppins', sans-serif;}
-.stSelectbox > div > div { border-radius: 10px !important; }
-.stTextInput > div > div > input { border-radius: 10px !important; }
+.stApp {
+    background: linear-gradient(160deg, #ffd6e0 0%, #ffafc5 20%, #ffc2d1 40%, #ff8fab 60%, #ffb3c6 80%, #ffc2d1 100%) !important;
+    font-family: 'Poppins', sans-serif;
+}
+.stSelectbox > div > div { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; }
+.stTextInput > div > div > input { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; }
 .stButton > button {
-    background: #ef4f5f !important; color: white !important; border: none !important;
-    border-radius: 10px !important; font-family: 'Poppins', sans-serif !important;
+    background: linear-gradient(135deg, #ef4f5f, #e8364a) !important; color: white !important; border: none !important;
+    border-radius: 12px !important; font-family: 'Poppins', sans-serif !important;
     font-weight: 600 !important; font-size: 1.05rem !important;
-    padding: 0.6rem 2rem !important; width: 100% !important;
+    padding: 0.7rem 2rem !important; width: 100% !important;
+    box-shadow: 0 4px 15px rgba(239,79,95,0.3) !important;
 }
 .stButton > button:hover {
-    background: #d64550 !important;
-    box-shadow: 0 6px 20px rgba(239,79,95,0.25) !important;
+    background: linear-gradient(135deg, #d64550, #c42f3e) !important;
+    box-shadow: 0 8px 25px rgba(239,79,95,0.4) !important;
+    transform: translateY(-1px);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -217,44 +223,221 @@ HERO_HTML = """
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Poppins',sans-serif; background:linear-gradient(135deg,#fff5f5 0%,#ffffff 40%,#fff0f0 100%); overflow-x:hidden; }
-.hero { position:relative; width:100%; min-height:820px; display:flex; flex-direction:column;
-        align-items:center; justify-content:center; padding:40px 20px; overflow:hidden; }
-.hero::before { content:""; position:absolute; width:500px; height:500px;
-    border:2px solid rgba(239,79,95,0.12); border-radius:50%;
-    top:-120px; left:-100px; animation:drift 18s ease-in-out infinite alternate; }
-.hero::after { content:""; position:absolute; width:600px; height:600px;
-    border:2px solid rgba(239,79,95,0.10); border-radius:50%;
-    bottom:-180px; right:-150px; animation:drift 22s ease-in-out infinite alternate-reverse; }
-@keyframes drift { 0%{transform:translate(0,0) rotate(0deg);} 100%{transform:translate(40px,-30px) rotate(15deg);} }
-.food { position:absolute; z-index:1; animation:floaty 6s ease-in-out infinite;
-        filter:drop-shadow(0 8px 24px rgba(0,0,0,0.10)); }
-.food.a { top:18%; left:6%; width:155px; animation-delay:0s; }
-.food.b { bottom:22%; right:5%; width:145px; animation-delay:1.5s; }
-.food.c { top:4%; right:10%; width:125px; animation-delay:3s; }
-.food.d { top:12%; right:22%; width:32px; animation-delay:0.8s; }
-.food.e { bottom:38%; left:12%; width:28px; animation-delay:2.2s; }
-@keyframes floaty { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-18px) rotate(4deg);} }
-.title { font-weight:800; font-size:3.2rem; color:#1c1c1c; text-align:center; line-height:1.15; z-index:2; position:relative; }
+body { font-family:'Poppins',sans-serif;
+       background: linear-gradient(160deg, #ffd6e0 0%, #ffafc5 20%, #ffc2d1 40%, #ff8fab 60%, #ffb3c6 80%, #ffc2d1 100%);
+       overflow-x:hidden; }
+
+.hero { position:relative; width:100%; min-height:1000px; display:flex; flex-direction:column;
+        align-items:center; justify-content:center; padding:50px 20px; overflow:hidden; }
+
+/* Decorative animated circles */
+.circle { position:absolute; border-radius:50%; border:2px solid rgba(239,79,95,0.2); animation:drift 20s ease-in-out infinite; }
+.circle.c1 { width:450px; height:450px; top:-100px; left:-80px; background:radial-gradient(circle,rgba(255,143,171,0.08),transparent); }
+.circle.c2 { width:550px; height:550px; bottom:-150px; right:-120px; animation-direction:alternate-reverse; animation-delay:2s; background:radial-gradient(circle,rgba(239,79,95,0.06),transparent); }
+.circle.c3 { width:350px; height:350px; top:25%; right:-60px; border-color:rgba(239,79,95,0.12); animation-delay:4s; }
+.circle.c4 { width:250px; height:250px; bottom:18%; left:3%; border-color:rgba(255,150,170,0.2); animation-delay:6s; }
+.circle.c5 { width:180px; height:180px; top:10%; left:40%; border-color:rgba(255,105,135,0.1); animation-delay:3s; }
+
+@keyframes drift {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(30px, -20px) rotate(10deg) scale(1.03); }
+    100% { transform: translate(-10px, 15px) rotate(-5deg) scale(0.98); }
+}
+
+/* Kawaii food character container */
+.food-char { position:absolute; z-index:3; display:flex; flex-direction:column; align-items:center;
+             animation:floatBounce 4s ease-in-out infinite; }
+.food-char .emoji { font-size:56px; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.12));
+                    position:relative; display:inline-block; }
+.food-char .face { position:absolute; top:50%; left:50%; transform:translate(-50%,-55%);
+                   font-size:14px; line-height:1; pointer-events:none; text-shadow:0 1px 2px rgba(0,0,0,0.2); }
+.food-char .wave { font-size:22px; position:absolute; top:-8px; right:-18px;
+                   animation:waveHand 1s ease-in-out infinite; transform-origin:bottom center; }
+.food-char .bubble { background:#fff; border-radius:14px; padding:3px 10px; font-size:0.7rem;
+                     font-weight:700; color:#ef4f5f; margin-bottom:4px; box-shadow:0 2px 8px rgba(239,79,95,0.15);
+                     position:relative; white-space:nowrap; animation:popIn 0.5s ease-out; }
+.food-char .bubble::after { content:''; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%);
+                            border-left:5px solid transparent; border-right:5px solid transparent;
+                            border-top:6px solid #fff; }
+
+@keyframes waveHand {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(25deg); }
+    50% { transform: rotate(-10deg); }
+    75% { transform: rotate(20deg); }
+}
+
+@keyframes floatBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25%      { transform: translateY(-18px) rotate(-4deg); }
+    50%      { transform: translateY(-28px) rotate(4deg); }
+    75%      { transform: translateY(-12px) rotate(-2deg); }
+}
+
+/* Position each food character */
+.food-char.f1  { top:4%;  left:3%;  animation-delay:0s; }
+.food-char.f2  { top:3%;  right:5%; animation-delay:0.6s; }
+.food-char.f3  { top:16%; left:12%; animation-delay:1.2s; }
+.food-char.f4  { top:12%; right:14%;animation-delay:1.8s; }
+.food-char.f5  { bottom:32%; left:2%;animation-delay:0.3s; }
+.food-char.f6  { bottom:28%; right:3%;animation-delay:1.5s; }
+.food-char.f7  { top:38%; left:1%;  animation-delay:2.4s; }
+.food-char.f8  { top:34%; right:2%; animation-delay:2s; }
+.food-char.f9  { bottom:14%; left:8%;animation-delay:0.9s; }
+.food-char.f10 { bottom:16%; right:10%;animation-delay:2.7s; }
+.food-char.f11 { top:52%; left:6%; animation-delay:0.5s; }
+.food-char.f12 { top:56%; right:7%;animation-delay:2.2s; }
+.food-char.f13 { top:25%; left:1%; animation-delay:3s; }
+.food-char.f14 { bottom:8%; right:18%; animation-delay:1s; }
+.food-char.f15 { top:68%; left:2%; animation-delay:3.3s; }
+.food-char.f16 { top:45%; right:1%; animation-delay:1.4s; }
+
+.food-char.f1 .emoji, .food-char.f2 .emoji { font-size:64px; }
+.food-char.f5 .emoji, .food-char.f6 .emoji { font-size:58px; }
+.food-char.f13 .emoji,.food-char.f14 .emoji { font-size:52px; }
+
+/* Floating hearts */
+.heart { position:absolute; z-index:1; font-size:20px; opacity:0.5; animation:heartFloat 6s ease-in-out infinite; }
+.heart.h1 { top:6%; left:25%; animation-delay:0s; font-size:18px; }
+.heart.h2 { top:18%; right:25%; animation-delay:1.5s; font-size:22px; }
+.heart.h3 { bottom:22%; left:30%; animation-delay:3s; font-size:16px; }
+.heart.h4 { top:42%; right:20%; animation-delay:0.8s; font-size:20px; }
+.heart.h5 { bottom:35%; right:28%; animation-delay:2.2s; font-size:14px; }
+.heart.h6 { top:62%; left:22%; animation-delay:4s; font-size:18px; }
+.heart.h7 { top:30%; left:35%; animation-delay:1s; font-size:15px; }
+.heart.h8 { bottom:10%; left:45%; animation-delay:2.5s; font-size:20px; }
+
+@keyframes heartFloat {
+    0%, 100% { transform: translateY(0) scale(1); opacity:0.4; }
+    50%      { transform: translateY(-20px) scale(1.2); opacity:0.7; }
+}
+
+/* sparkle particles */
+.sparkle { position:absolute; width:6px; height:6px; background:#ef4f5f; border-radius:50%;
+           opacity:0.4; animation:twinkle 3s ease-in-out infinite; }
+.sparkle.s1 { top:10%; left:30%; }
+.sparkle.s2 { top:22%; right:28%; animation-delay:1s; width:4px; height:4px; }
+.sparkle.s3 { bottom:30%; left:22%; animation-delay:2s; width:5px; height:5px; }
+.sparkle.s4 { top:48%; right:22%; animation-delay:0.5s; }
+.sparkle.s5 { bottom:18%; left:38%; animation-delay:1.5s; width:4px; height:4px; }
+.sparkle.s6 { top:65%; right:32%; animation-delay:2.5s; width:5px; height:5px; }
+.sparkle.s7 { top:8%; left:50%; animation-delay:0.3s; width:5px; height:5px; background:#ff6b81; }
+.sparkle.s8 { bottom:40%; right:15%; animation-delay:1.8s; width:7px; height:7px; background:#ff4757; }
+.sparkle.s9 { top:75%; left:15%; animation-delay:3s; width:4px; height:4px; }
+.sparkle.s10{ bottom:5%; right:40%; animation-delay:0.7s; width:6px; height:6px; background:#ff6b81; }
+
+@keyframes twinkle {
+    0%, 100% { opacity:0.2; transform:scale(1); }
+    50%      { opacity:0.8; transform:scale(2); }
+}
+
+@keyframes popIn {
+    0% { transform:scale(0); opacity:0; }
+    80% { transform:scale(1.1); }
+    100% { transform:scale(1); opacity:1; }
+}
+
+.title { font-weight:800; font-size:3.4rem; color:#1c1c1c; text-align:center; line-height:1.15; z-index:4; position:relative; }
 .title span { color:#ef4f5f; }
-.subtitle { font-weight:300; font-size:1.05rem; color:#696969; text-align:center;
-            max-width:480px; margin:18px auto 0; line-height:1.7; z-index:2; position:relative; }
-.vid-wrap { position:relative; z-index:2; margin-top:40px; border-radius:20px; overflow:hidden;
-            box-shadow:0 20px 60px rgba(239,79,95,0.18); width:700px; max-width:90%; }
-.vid-wrap video { width:100%; display:block; border-radius:20px; }
-.stats { display:flex; justify-content:center; gap:40px; margin-top:45px; z-index:2; position:relative; flex-wrap:wrap; }
-.stat { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #f0f0f0;
-        border-radius:14px; padding:16px 24px; box-shadow:0 4px 20px rgba(0,0,0,0.04); }
+.subtitle { font-weight:300; font-size:1.1rem; color:#444; text-align:center;
+            max-width:500px; margin:20px auto 0; line-height:1.7; z-index:4; position:relative; }
+.vid-wrap { position:relative; z-index:4; margin-top:40px; border-radius:20px; overflow:hidden;
+            box-shadow:0 20px 60px rgba(239,79,95,0.28); width:720px; max-width:90%;
+            border: 3px solid rgba(239,79,95,0.2); }
+.vid-wrap video { width:100%; display:block; border-radius:18px; }
+.stats { display:flex; justify-content:center; gap:40px; margin-top:50px; z-index:4; position:relative; flex-wrap:wrap; }
+.stat { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px);
+        border:1px solid rgba(239,79,95,0.15); border-radius:16px; padding:18px 26px;
+        box-shadow:0 4px 20px rgba(239,79,95,0.12); }
 .stat-n { font-weight:700; font-size:1.4rem; color:#1c1c1c; }
 .stat-l { font-size:0.82rem; color:#999; }
-.stat-i { font-size:1.6rem; }
+.stat-i { font-size:1.8rem; }
 </style></head><body>
 <div class="hero">
-    <img class="food a" src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
-    <img class="food b" src="https://cdn-icons-png.flaticon.com/512/3595/3595455.png">
-    <img class="food c" src="https://cdn-icons-png.flaticon.com/512/1046/1046751.png">
-    <img class="food d" src="https://cdn-icons-png.flaticon.com/512/590/590772.png">
-    <img class="food e" src="https://cdn-icons-png.flaticon.com/512/590/590772.png">
+    <!-- Decorative circles -->
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+    <div class="circle c3"></div>
+    <div class="circle c4"></div>
+    <div class="circle c5"></div>
+
+    <!-- Sparkle particles -->
+    <div class="sparkle s1"></div><div class="sparkle s2"></div><div class="sparkle s3"></div>
+    <div class="sparkle s4"></div><div class="sparkle s5"></div><div class="sparkle s6"></div>
+    <div class="sparkle s7"></div><div class="sparkle s8"></div><div class="sparkle s9"></div>
+    <div class="sparkle s10"></div>
+
+    <!-- Floating hearts -->
+    <div class="heart h1">💕</div><div class="heart h2">💗</div><div class="heart h3">💖</div>
+    <div class="heart h4">💕</div><div class="heart h5">💗</div><div class="heart h6">💖</div>
+    <div class="heart h7">💕</div><div class="heart h8">💗</div>
+
+    <!-- Cute kawaii food characters with faces waving hi -->
+    <div class="food-char f1">
+        <div class="bubble">Hi! 😊</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍔</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f2">
+        <div class="bubble">Hey! 🥰</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍕</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f3">
+        <div class="bubble">Hiii!</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍩</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f4">
+        <div class="bubble">Hello! 😋</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍣</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f5">
+        <div class="bubble">Yoo! 🎉</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🌮</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f6">
+        <div class="bubble">Hi there!</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍰</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f7">
+        <div class="bubble">Heyyy! 😄</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🧁</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f8">
+        <div class="bubble">Namaste!</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍜</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f9">
+        <div class="bubble">Hi! 🍦</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍦</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f10">
+        <div class="bubble">Bonjour!</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🥐</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f11">
+        <div class="bubble">Hey! 🍿</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍿</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f12">
+        <div class="bubble">Hola! 🥗</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🥗</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f13">
+        <div class="bubble">Yo! 😎</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍟</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f14">
+        <div class="bubble">Hi hi!</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍪</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f15">
+        <div class="bubble">Ciao! 🤗</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🥞</span><span class="wave">👋</span></div>
+    </div>
+    <div class="food-char f16">
+        <div class="bubble">Heyy!</div>
+        <div style="position:relative;display:inline-block"><span class="emoji">🍡</span><span class="wave">👋</span></div>
+    </div>
+
     <div class="title"><span>Better food</span> for<br>more people</div>
     <div class="subtitle">For over a decade, we've enabled our customers to discover new tastes, delivered right to their doorstep</div>
     <div class="vid-wrap">
@@ -271,4 +454,4 @@ body { font-family:'Poppins',sans-serif; background:linear-gradient(135deg,#fff5
 </body></html>
 """
 
-components.html(HERO_HTML, height=880, scrolling=False)
+# components.html(HERO_HTML, height=1050, scrolling=False)  # Commented out duplicate
