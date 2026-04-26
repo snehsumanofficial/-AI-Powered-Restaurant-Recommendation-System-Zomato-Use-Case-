@@ -32,14 +32,23 @@ st.markdown("""
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden !important;
 }
-.stSelectbox > div > div { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; }
-.stTextInput > div > div > input { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; }
+.stSelectbox > div > div { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; font-size: 1.1rem !important; }
+.stTextInput > div > div > input { border-radius: 10px !important; background: rgba(255,255,255,0.9) !important; font-size: 1.1rem !important; }
+
+/* Label Styling */
+div[data-testid="stWidgetLabel"] p {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #1c1c1c !important;
+}
+
 .stButton > button {
     background: linear-gradient(135deg, #ef4f5f, #e8364a) !important; color: white !important; border: none !important;
     border-radius: 12px !important; font-family: 'Poppins', sans-serif !important;
-    font-weight: 600 !important; font-size: 1.05rem !important;
-    padding: 0.7rem 2rem !important; width: 100% !important;
+    font-weight: 600 !important; font-size: 1.2rem !important;
+    padding: 0.8rem 2rem !important; width: 100% !important;
     box-shadow: 0 4px 15px rgba(239,79,95,0.3) !important;
+    margin-top: 10px !important;
 }
 .stButton > button:hover {
     background: linear-gradient(135deg, #d64550, #c42f3e) !important;
