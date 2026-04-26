@@ -37,9 +37,10 @@ st.markdown("""
 
 /* Label Styling */
 div[data-testid="stWidgetLabel"] p {
-    font-size: 1.25rem !important;
+    font-size: 1.7rem !important;
     font-weight: 700 !important;
     color: #1c1c1c !important;
+    letter-spacing: -0.5px !important;
 }
 
 .stButton > button {
@@ -294,7 +295,7 @@ if search_clicked:
             <style>
             * {{ margin:0; padding:0; box-sizing:border-box; }}
             body {{ font-family:'Poppins',sans-serif; background:#fafafa; padding:30px 20px; }}
-            h2 {{ text-align:center; font-weight:700; font-size:1.7rem; color:#1c1c1c; margin-bottom:6px; }}
+            h2 {{ text-align:center; font-weight:800; font-size:2.2rem; color:#1c1c1c; margin-bottom:8px; letter-spacing:-1px; }}
             .sub {{ text-align:center; color:#999; font-size:0.88rem; margin-bottom:28px; line-height:1.5; }}
             .grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:22px;
                      max-width:1100px; margin:0 auto; }}
