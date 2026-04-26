@@ -118,7 +118,7 @@ div[data-testid="stWidgetLabel"] p {
 </style>
 
 <!-- Full Page Background Video -->
-<video autoplay muted loop playsinline id="bg-video">
+<video autoplay muted loop playsinline id="bg-video" style="position:fixed; top:0; left:0; width:100vw; height:100vh; object-fit:cover; z-index:-1; opacity:0.5;">
     <source src="https://b.zmtcdn.com/data/file_assets/5e05c26b91b99ae33bfc1c6d45626cbe1722240498.mp4" type="video/mp4">
 </video>
 
@@ -203,6 +203,35 @@ with col4:
     min_rating = st.slider("⭐ Min Rating", 0.0, 5.0, 3.5, 0.1)
 
 search_clicked = st.button("🔍  Get AI Recommendations")
+
+if not search_clicked:
+    st.markdown("""
+    <div style="display:flex; flex-direction:column; align-items:center; margin-top:50px; z-index:10; position:relative;">
+        <div style="font-weight:800; font-size:3.6rem; color:#1c1c1c; text-align:center; line-height:1.15; font-family:'Poppins',sans-serif;">
+            <span style="color:#ef4f5f;">Better food</span> for<br>more people
+        </div>
+        <div style="font-weight:300; font-size:1.2rem; color:#444; text-align:center; max-width:550px; margin:20px auto 0; line-height:1.7; font-family:'Poppins',sans-serif;">
+            For over a decade, we've enabled our customers to discover new tastes, delivered right to their doorstep
+        </div>
+        <div style="margin-top:40px; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(239,79,95,0.28); width:720px; max-width:90%; border:3px solid rgba(239,79,95,0.2);">
+            <video autoplay muted loop playsinline style="width:100%; display:block; border-radius:18px;">
+                <source src="https://b.zmtcdn.com/data/file_assets/5e05c26b91b99ae33bfc1c6d45626cbe1722240498.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div style="display:flex; justify-content:center; gap:40px; margin-top:50px; flex-wrap:wrap; font-family:'Poppins',sans-serif;">
+            <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); border:1px solid rgba(239,79,95,0.15); border-radius:16px; padding:18px 26px; box-shadow:0 4px 20px rgba(239,79,95,0.12);">
+                <div><div style="font-weight:800; font-size:1.5rem; color:#1c1c1c;">3,00,000+</div><div style="font-size:0.9rem; color:#999; font-weight:500;">restaurants</div></div><div style="font-size:2rem;">🏪</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); border:1px solid rgba(239,79,95,0.15); border-radius:16px; padding:18px 26px; box-shadow:0 4px 20px rgba(239,79,95,0.12);">
+                <div><div style="font-weight:800; font-size:1.5rem; color:#1c1c1c;">800+</div><div style="font-size:0.9rem; color:#999; font-weight:500;">cities</div></div><div style="font-size:2rem;">📍</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); border:1px solid rgba(239,79,95,0.15); border-radius:16px; padding:18px 26px; box-shadow:0 4px 20px rgba(239,79,95,0.12);">
+                <div><div style="font-weight:800; font-size:1.5rem; color:#1c1c1c;">3 billion+</div><div style="font-size:0.9rem; color:#999; font-weight:500;">orders delivered</div></div><div style="font-size:2rem;">📦</div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════
 #  2)  RESULTS — RIGHT BELOW THE SEARCH
