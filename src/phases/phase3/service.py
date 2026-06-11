@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+from pathlib import Path
 from typing import Any
 
 log = logging.getLogger(__name__)
@@ -206,13 +207,33 @@ def recommend_with_groq(
 
 
 def load_restaurants_for_app(settings: Settings) -> list[Restaurant]:
+    # 1) If explicit fixture path is set, use it
     if settings.data_fixture_path:
         repo = load_restaurants_from_json(settings.data_fixture_path, settings.sample_limit)
+        log.info("Loaded %d restaurants from fixture: %s", len(repo.get_all()), settings.data_fixture_path)
         return repo.get_all()
+
+    # 2) Try bundled data file first (always available, no network needed)
+    bundled_path = Path(__file__).parent.parent.parent.parent / "data" / "zomato_restaurants.json"
+    if bundled_path.exists():
+        try:
+            repo = load_restaurants_from_json(bundled_path, settings.sample_limit)
+            log.info("Loaded %d restaurants from bundled data: %s", len(repo.get_all()), bundled_path)
+            return repo.get_all()
+        except Exception as e:
+            log.warning("Failed to load bundled data: %s", e)
+
+    # 3) Try HuggingFace download
     try:
         repo = load_restaurants(settings)
-    except Exception:
-        repo = load_restaurants_from_json("tests/fixtures/restaurants_sample.json", settings.sample_limit)
+        log.info("Loaded %d restaurants from HuggingFace", len(repo.get_all()))
+        return repo.get_all()
+    except Exception as e:
+        log.warning("HuggingFace load failed: %s", e)
+
+    # 4) Last resort: tiny test fixture
+    log.warning("Falling back to test fixture — very limited data!")
+    repo = load_restaurants_from_json("tests/fixtures/restaurants_sample.json", settings.sample_limit)
     return repo.get_all()
 
 
