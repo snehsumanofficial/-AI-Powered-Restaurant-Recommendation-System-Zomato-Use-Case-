@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import json
+import logging
+import re
 from typing import Any
+
+log = logging.getLogger(__name__)
 
 from src.phases.phase1.settings import Settings
 from src.phases.phase2.loader import load_restaurants, load_restaurants_from_json
@@ -97,6 +101,26 @@ def _fallback_recommendation(candidates: list[Restaurant]) -> dict[str, Any]:
     }
 
 
+def _extract_json(text: str) -> dict[str, Any] | None:
+    """Extract JSON from LLM response, handling markdown code fences."""
+    # Strip markdown code fences like ```json ... ```
+    cleaned = re.sub(r'^```(?:json)?\s*', '', text.strip(), flags=re.MULTILINE)
+    cleaned = re.sub(r'```\s*$', '', cleaned.strip(), flags=re.MULTILINE)
+    cleaned = cleaned.strip()
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+    # Try to find JSON object in the text
+    match = re.search(r'\{[\s\S]*\}', text)
+    if match:
+        try:
+            return json.loads(match.group())
+        except json.JSONDecodeError:
+            pass
+    return None
+
+
 def recommend_with_groq(
     settings: Settings, prefs: UserPreferences, candidates: list[Restaurant]
 ) -> dict[str, Any]:
@@ -105,6 +129,7 @@ def recommend_with_groq(
 
     # Keep fallback path so app remains usable without key/provider availability.
     if not settings.llm_api_key:
+        log.info("No LLM_API_KEY set — using fallback recommendations.")
         return _fallback_recommendation(candidates)
 
     context = build_llm_context(candidates, prefs)
@@ -114,19 +139,24 @@ def recommend_with_groq(
         "CANDIDATE RESTAURANTS:\n"
         f"{context}\n\n"
         "TASK: Rank the top 5 restaurants that BEST match the user's cuisine and rating preferences. "
-        "Return strict JSON with keys 'summary' and 'recommendations'. "
+        "Return ONLY raw JSON (no markdown, no code fences) with keys 'summary' and 'recommendations'. "
         "In 'summary', explain exactly how these choices fit the requested cuisine and rating. "
         "In 'recommendations', provide an array of objects with 'restaurant_id', 'rank', and 'explanation'. "
         "The 'explanation' must mention why the cuisine and rating are a good match."
     )
     try:
         client = GroqClient(settings=settings, timeout_seconds=45)
-        response = client.chat(prompt, system_prompt="You are a precise Zomato restaurant recommender. Always prioritize the user's specific cuisine and rating filters.")
-        parsed = json.loads(response.text)
+        response = client.chat(
+            prompt,
+            system_prompt="You are a precise Zomato restaurant recommender. Always return raw JSON only — no markdown, no code fences. Always prioritize the user's specific cuisine and rating filters."
+        )
+        log.info("Groq raw response (first 500 chars): %s", response.text[:500])
+        parsed = _extract_json(response.text)
         if isinstance(parsed, dict) and "recommendations" in parsed:
             return parsed
-    except Exception:
-        pass
+        log.warning("Groq response did not contain 'recommendations' key. Parsed: %s", type(parsed))
+    except Exception as exc:
+        log.error("Groq LLM call failed: %s", exc, exc_info=True)
     return _fallback_recommendation(candidates)
 
 

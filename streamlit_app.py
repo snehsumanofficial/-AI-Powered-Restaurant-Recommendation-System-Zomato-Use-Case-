@@ -1,4 +1,5 @@
 import sys
+import os
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent))
 
@@ -251,6 +252,19 @@ FOOD_IMAGES = [
 ]
 
 if search_clicked:
+    # Ensure API key is available (support Streamlit secrets for cloud)
+    try:
+        secret_key = st.secrets.get("LLM_API_KEY", None)
+        if secret_key and not os.environ.get("LLM_API_KEY"):
+            os.environ["LLM_API_KEY"] = secret_key
+    except Exception:
+        pass  # secrets not configured, .env will be used
+
+    # Reload settings to pick up any newly set env vars
+    import importlib, src.phases.phase1.settings as _s
+    importlib.reload(_s)
+    current_settings = _s.load_settings()
+
     prefs = UserPreferences(
         locality=selected_locality,
         budget=budget if budget else None,
@@ -261,11 +275,13 @@ if search_clicked:
     with st.spinner("🔎 Finding the best restaurants for you…"):
         candidates = retrieve_candidates(prefs, restaurants, top_k=15)
 
+    st.info(f"📊 Found **{len(candidates)}** candidate restaurants matching your filters.")
+
     if not candidates:
-        st.warning("No restaurants matched those filters. Try relaxing your criteria.")
+        st.warning("No restaurants matched those filters. Try relaxing your criteria (lower the min rating or pick a broader locality).")
     else:
         with st.spinner("🤖 Asking our AI to rank and explain…"):
-            result = recommend_with_groq(settings, prefs, candidates)
+            result = recommend_with_groq(current_settings, prefs, candidates)
 
         summary = result.get("summary", "")
         recs = result.get("recommendations", [])
