@@ -306,7 +306,7 @@ if search_clicked:
                     "location": cand.location if cand else "",
                 })
         else:
-            for idx, c in enumerate(candidates[:8]):
+            for idx, c in enumerate(candidates[:10]):
                 display_items.append({
                     "name": c.name,
                     "cuisines": " • ".join(c.cuisines[:4]) if c.cuisines else "—",

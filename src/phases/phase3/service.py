@@ -16,21 +16,39 @@ from src.phases.phase3.preferences import UserPreferences
 
 _BUDGET_LEVELS = {"low": 1, "medium": 2, "high": 3}
 
-def _matches_preferences(restaurant: Restaurant, prefs: UserPreferences) -> bool:
-    if prefs.locality and prefs.locality.lower() != restaurant.location.lower():
-        if prefs.locality.lower() not in restaurant.location.lower() and restaurant.location.lower() not in prefs.locality.lower():
-            return False
-            
+def _locality_matches(restaurant_loc: str, pref_loc: str) -> bool:
+    """Check if locality matches using substring in either direction."""
+    rl = restaurant_loc.lower()
+    pl = pref_loc.lower()
+    if rl == pl:
+        return True
+    if pl in rl or rl in pl:
+        return True
+    # Match on first word (e.g. 'banashankari' matches 'banashankari, bangalore')
+    pl_first = pl.split(",")[0].strip()
+    rl_first = rl.split(",")[0].strip()
+    if pl_first and rl_first and (pl_first in rl_first or rl_first in pl_first):
+        return True
+    return False
+
+
+def _matches_preferences(restaurant: Restaurant, prefs: UserPreferences,
+                         relax_cuisine: bool = False, relax_rating: bool = False) -> bool:
+    # Locality is always required
+    if prefs.locality and not _locality_matches(restaurant.location, prefs.locality):
+        return False
+
     if prefs.budget and restaurant.cost_tier:
         pref_level = _BUDGET_LEVELS.get(prefs.budget, 3)
         rest_level = _BUDGET_LEVELS.get(restaurant.cost_tier, 3)
         if rest_level > pref_level:
             return False
-            
-    if prefs.min_rating and (restaurant.rating is None or restaurant.rating < prefs.min_rating):
-        return False
-        
-    if prefs.cuisines:
+
+    if not relax_rating:
+        if prefs.min_rating and (restaurant.rating is None or restaurant.rating < prefs.min_rating):
+            return False
+
+    if prefs.cuisines and not relax_cuisine:
         restaurant_cuisines_lower = [c.lower() for c in restaurant.cuisines]
         matched = False
         for pref_c in prefs.cuisines:
@@ -40,14 +58,38 @@ def _matches_preferences(restaurant: Restaurant, prefs: UserPreferences) -> bool
                 break
         if not matched:
             return False
-            
+
     return True
 
 
 def retrieve_candidates(
-    prefs: UserPreferences, restaurants: list[Restaurant], top_k: int = 10
+    prefs: UserPreferences, restaurants: list[Restaurant], top_k: int = 30
 ) -> list[Restaurant]:
+    """Progressive retrieval: strict first, then relax filters if too few results."""
+    # Pass 1: strict match
     filtered = [r for r in restaurants if _matches_preferences(r, prefs)]
+    log.info("Pass 1 (strict): %d candidates", len(filtered))
+
+    # Pass 2: relax cuisine if too few
+    if len(filtered) < 5 and prefs.cuisines:
+        filtered = [r for r in restaurants if _matches_preferences(r, prefs, relax_cuisine=True)]
+        log.info("Pass 2 (relax cuisine): %d candidates", len(filtered))
+
+    # Pass 3: relax rating if still too few
+    if len(filtered) < 5:
+        filtered = [r for r in restaurants if _matches_preferences(r, prefs, relax_cuisine=True, relax_rating=True)]
+        log.info("Pass 3 (relax all): %d candidates", len(filtered))
+
+    # Deduplicate by name (some datasets have duplicates)
+    seen_names: set[str] = set()
+    unique: list[Restaurant] = []
+    for r in filtered:
+        key = r.name.lower().strip()
+        if key not in seen_names:
+            seen_names.add(key)
+            unique.append(r)
+    filtered = unique
+
     filtered.sort(
         key=lambda r: (
             r.rating if r.rating is not None else -1.0,
@@ -84,16 +126,18 @@ def build_llm_context(candidates: list[Restaurant], prefs: UserPreferences) -> s
 
 
 def _fallback_recommendation(candidates: list[Restaurant]) -> dict[str, Any]:
-    top = candidates[:5]
+    top = candidates[:10]
     return {
-        "summary": f"Found {len(candidates)} restaurants matching your filters. Here are the top picks sorted by rating.",
+        "summary": f"Found {len(candidates)} restaurants matching your filters. Here are the top {len(top)} picks sorted by rating.",
         "recommendations": [
             {
                 "restaurant_id": r.id,
                 "rank": idx + 1,
                 "explanation": (
-                    f"{r.name} matches your filters with rating {r.rating} and cuisines "
-                    f"{', '.join(r.cuisines) if r.cuisines else 'N/A'}."
+                    f"{r.name} is a great choice with a rating of {r.rating}/5"
+                    f"{' serving ' + ', '.join(r.cuisines[:3]) if r.cuisines else ''}"
+                    f"{' at ₹' + str(int(r.cost_for_two)) + ' for two' if r.cost_for_two else ''}"
+                    f" in {r.location}."
                 ),
             }
             for idx, r in enumerate(top)
@@ -138,10 +182,11 @@ def recommend_with_groq(
         f"- Min Rating: {prefs.min_rating}\n- Locality: {prefs.locality}\n\n"
         "CANDIDATE RESTAURANTS:\n"
         f"{context}\n\n"
-        "TASK: Rank the top 5 restaurants that BEST match the user's cuisine and rating preferences. "
+        "TASK: Rank the top 8 restaurants that BEST match the user's cuisine and rating preferences. "
         "Return ONLY raw JSON (no markdown, no code fences) with keys 'summary' and 'recommendations'. "
         "In 'summary', explain exactly how these choices fit the requested cuisine and rating. "
-        "In 'recommendations', provide an array of objects with 'restaurant_id', 'rank', and 'explanation'. "
+        "In 'recommendations', provide an array of 8 objects with 'restaurant_id', 'rank', and 'explanation'. "
+        "Include ALL 8 different restaurants — variety is important. "
         "The 'explanation' must mention why the cuisine and rating are a good match."
     )
     try:
